@@ -1,0 +1,56 @@
+import 'package:cross_file/cross_file.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
+class CloudStorageProvider {
+  final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+
+  Future<CloudStorageResult?> uploadImage({
+    required XFile imageToUpload,
+    required String title,
+  }) async {
+    String imageFileName =
+        title + DateTime.now().millisecondsSinceEpoch.toString();
+    final Reference ref = _firebaseStorage.ref().child(imageFileName);
+    UploadTask uploadTask = ref.putData(await imageToUpload.readAsBytes());
+    //listener
+    uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+      print('UploadTask: ${snapshot.state}');
+      print(
+          'Progress: ${(snapshot.bytesTransferred / snapshot.totalBytes) * 100} %');
+    }, onError: (e) {
+      // The final snapshot is also available on the task via `.snapshot`,
+      // this can include 2 additional states, `TaskState.error` & `TaskState.canceled`
+      print(uploadTask.snapshot);
+
+      if (e.code == 'permission-denied') {
+        print('User does not have permission to upload to this reference.');
+      }
+    });
+    // We can still optionally use the Future alongside the stream.
+    String? downloadUrl;
+    try {
+      await uploadTask;
+      downloadUrl = await ref.getDownloadURL();
+      if (downloadUrl.isNotEmpty) {
+        return CloudStorageResult(
+          imageUrl: downloadUrl,
+          imageFileName: imageFileName,
+        );
+      }
+      print('Upload complete.');
+    } on FirebaseException catch (e) {
+      print(e.message);
+      if (e.code == 'permission-denied') {
+        print('User does not have permission to upload to this reference.');
+      }
+      // ...
+    }
+    return null;
+  }
+}
+
+class CloudStorageResult {
+  final String imageUrl;
+  final String imageFileName;
+  CloudStorageResult({required this.imageUrl, required this.imageFileName});
+}
