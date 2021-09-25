@@ -1,16 +1,15 @@
 # safetynetlk
 
-A new Flutter project.
+App for required functions
 
-## Getting Started
+## Get it running
 
-This project is a starting point for a Flutter application.
+recommended to use VSCode and you will have to setup the flutter developent environment as per:
+https://flutter.dev/docs/get-started/install
 
-A few resources to get you started if this is your first Flutter project:
+You can also message me via the usual channels and I will literally come on a zoom meeting and get you ready for developing. Try trello if you can't get me elsewhere.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+After this, run
+`flutter pub get`
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+and launch/debug app the usual way from VSCode.
